@@ -1,0 +1,43 @@
+.btn-info, .btn-danger, .btn-success{
+    border: 3px darkred solid;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+#selectedMeal, #selectedCuisines{
+    height: 20px;
+}
+
+#filter-div{
+    max-width: 40%;
+    border-right: 3px black solid;
+}
+
+#recipe-results{
+    max-width: 60%;
+}
+
+.p-types{
+    margin: 0;
+    margin-bottom: 2px;
+}
+
+.ready-p{
+    margin: 0px;
+}
+
+.p-ingredients{
+    margin: 0px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 2px black solid;
+}
+
+.false-red{
+    color: red;
+}
+
+.true-green{
+    color: darkgreen;
+}
