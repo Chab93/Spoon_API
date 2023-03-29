@@ -1,4 +1,3 @@
-import { Recipe } from "./api_interface";
 //Settings
 const apiKey: string = "f4780df1170f41749bd24df676766198";
 const maxHits: number = 3;
