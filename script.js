@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //Settings
 var apiKey = "f4780df1170f41749bd24df676766198";
 var maxHits = 3;

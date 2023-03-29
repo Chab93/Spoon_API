@@ -3,6 +3,30 @@ import { Recipe } from "./api_interface";
 const apiKey: string = "f4780df1170f41749bd24df676766198";
 const maxHits: number = 3;
 
+
+// Interface, allow us in TypeScript to handle the API object correctly with its fields.
+interface Recipe  {
+    id: number;
+
+    title: string;
+    summary: string;
+    image: string;
+
+    readyInMinutes: number;
+    servings: number;
+
+    vegetarian: boolean;
+    vegan: boolean;
+    glutenFree: boolean;
+    dairyFree: boolean;
+
+    cuisines: string[];
+    dishTypes: string[];
+    diets: string[];
+
+    analyzedInstructions: string[];
+}
+
 //#region /////////////////////////////////|   FILTER BUTTONS CREATED HERE   |/////////////////////////////////
 
 // Array containing all filters we want to have.
