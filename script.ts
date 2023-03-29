@@ -1,6 +1,6 @@
 //Settings
-const apiKey: string = "f4780df1170f41749bd24df676766198";
-const maxHits: number = 3;
+let apiKey: string | null = localStorage.getItem("apiKey");
+const maxHits: number = 2;
 
 
 // Interface, allow us in TypeScript to handle the API object correctly with its fields.
@@ -25,6 +25,37 @@ interface Recipe  {
 
     analyzedInstructions: string[];
 }
+
+
+//#region /////////////////////////////////|   STORE API-KEY   |/////////////////////////////////
+
+const inputField: HTMLElement | null = document.getElementById("apiKey-input");
+const submitBtn: HTMLElement | null = document.getElementById("submitKey");
+const displayKeyP: HTMLElement | null = document.getElementById("savedKey-p");
+
+if(apiKey != null){
+    displayKeyP!.innerHTML = apiKey;
+}
+
+submitBtn?.addEventListener("click", () => {
+    //@ts-ignore
+    const textInput: string | undefined = inputField?.value;
+
+    if(textInput!.length > 0){
+        localStorage.setItem("apiKey", textInput!)
+        apiKey = localStorage.getItem("apiKey");
+        //@ts-ignore
+        displayKeyP!.innerHTML = apiKey;
+        //@ts-ignore
+        inputField!.value = "";
+    }
+    
+    //@ts-ignore
+    inputField!.value = "";
+})
+
+//#endregion
+
 
 //#region /////////////////////////////////|   FILTER BUTTONS CREATED HERE   |/////////////////////////////////
 
@@ -180,6 +211,7 @@ fetchBtn?.addEventListener("click", () => {
     fetch(encodeURI(apiString))
         .then((response) => response.json())
         .then((data) => createRecipes(data.results))
+        .catch(() => alert("Cannot connect, check your API key."))
 })
 //#endregion
 

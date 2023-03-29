@@ -1,6 +1,28 @@
 //Settings
-var apiKey = "f4780df1170f41749bd24df676766198";
-var maxHits = 3;
+var apiKey = localStorage.getItem("apiKey");
+var maxHits = 2;
+//#region /////////////////////////////////|   STORE API-KEY   |/////////////////////////////////
+var inputField = document.getElementById("apiKey-input");
+var submitBtn = document.getElementById("submitKey");
+var displayKeyP = document.getElementById("savedKey-p");
+if (apiKey != null) {
+    displayKeyP.innerHTML = apiKey;
+}
+submitBtn === null || submitBtn === void 0 ? void 0 : submitBtn.addEventListener("click", function () {
+    //@ts-ignore
+    var textInput = inputField === null || inputField === void 0 ? void 0 : inputField.value;
+    if (textInput.length > 0) {
+        localStorage.setItem("apiKey", textInput);
+        apiKey = localStorage.getItem("apiKey");
+        //@ts-ignore
+        displayKeyP.innerHTML = apiKey;
+        //@ts-ignore
+        inputField.value = "";
+    }
+    //@ts-ignore
+    inputField.value = "";
+});
+//#endregion
 //#region /////////////////////////////////|   FILTER BUTTONS CREATED HERE   |/////////////////////////////////
 // Array containing all filters we want to have.
 var mealTypes = [
@@ -132,7 +154,8 @@ fetchBtn === null || fetchBtn === void 0 ? void 0 : fetchBtn.addEventListener("c
     console.log(encodeURI(apiString));
     fetch(encodeURI(apiString))
         .then(function (response) { return response.json(); })
-        .then(function (data) { return createRecipes(data.results); });
+        .then(function (data) { return createRecipes(data.results); })
+        .catch(function () { return alert("Cannot connect, check your API key."); });
 });
 //#endregion
 //#region /////////////////////////////////|   FUNCTIONS HERE   |/////////////////////////////////
