@@ -20,3 +20,5 @@ interface Recipe  {
 
     analyzedInstructions: string[];
 }
+
+export { Recipe };
