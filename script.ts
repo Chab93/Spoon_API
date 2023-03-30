@@ -176,11 +176,12 @@ mealDiv?.addEventListener("click", (event) => {
     if (btnInfo.nodeName == "BUTTON"){
         if(btnInfo.innerText == "Clear"){
             selectedMeal!.innerText = "";
+            mealTypeChoice = "";
         } else{
             mealTypeChoice = btnInfo.innerText.toLowerCase();
             selectedMeal!.innerText = btnInfo.innerText.toLowerCase();
         }
-    } 
+    }
 })
 
 // Event listener that looks for clicks in the entire div = all the buttons.

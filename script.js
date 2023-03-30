@@ -124,6 +124,7 @@ mealDiv === null || mealDiv === void 0 ? void 0 : mealDiv.addEventListener("clic
     if (btnInfo.nodeName == "BUTTON") {
         if (btnInfo.innerText == "Clear") {
             selectedMeal.innerText = "";
+            mealTypeChoice = "";
         }
         else {
             mealTypeChoice = btnInfo.innerText.toLowerCase();
