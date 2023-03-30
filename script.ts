@@ -1,6 +1,7 @@
 //Settings
 let apiKey: string | null = localStorage.getItem("apiKey");
 const maxHits: number = 2;
+const randomHits: number = 2;
 
 
 // Interface, allow us in TypeScript to handle the API object correctly with its fields.
@@ -62,14 +63,14 @@ submitBtn?.addEventListener("click", () => {
 // Array containing all filters we want to have.
 const mealTypes: string[] = [
     "Main Course",
-    "Dinner",
+    "Breakfast",
     "Lunch",
+    "Dinner",
     "Side Dish",
     "Dessert",
     "Appetizer",
     "Salad",
     "Bread",
-    "Breakfast",
     "Soup",
     "Beverage",
     "Sauce",
@@ -160,8 +161,9 @@ let mealTypeChoice: string = "";
 const selectedMeal: HTMLElement | null = document.getElementById("selectedMeal");
 const selectedCuisines: HTMLElement | null = document.getElementById("selectedCuisines");
 
-// FetchAPI button which will call the API with all selected filter parameters.
+// FetchAPI + Random button which will call the API with all selected filter parameters.
 const fetchBtn: HTMLElement | null = document.getElementById("call-api-btn");
+const randomBtn: HTMLElement | null = document.getElementById("get-random-recipe");
 
 // HTML element where all recipes are appended, fetch button also clear previous results.
 const recipeResults: HTMLElement | null = document.getElementById("recipe-results");
@@ -213,6 +215,20 @@ fetchBtn?.addEventListener("click", () => {
         .then((data) => createRecipes(data.results))
         .catch(() => alert("Cannot connect, check your API key."))
 })
+
+// Event listener for the Random button, will create the URI for API call and receive data as JSON.
+randomBtn?.addEventListener("click", () => {
+    recipeResults!.innerHTML = "";
+
+    let apiString: string = `https://api.spoonacular.com/recipes/random?apiKey=${apiKey}&tags=${getMealTypeByTime()}&number=${randomHits}`;
+    console.log(encodeURI(apiString))
+
+    fetch(encodeURI(apiString))
+        .then((response) => response.json())
+        .then((data) => createRecipes(data.recipes))
+})
+
+
 //#endregion
 
 
@@ -239,6 +255,28 @@ function cuisineFilter(){
             return returnString.toLowerCase();
         }
     }
+}
+
+function getMealTypeByTime(){
+
+    const date: Date = new Date();
+    const hours: number = date.getHours();
+
+    if(hours > 3 && hours < 11){
+        return "breakfast";
+    } else if(hours > 10 && hours < 16){
+        return "lunch";
+    } else if(hours > 15 && hours < 23){
+        return "dinner";
+    } else{
+        return "snack";
+    }
+}
+
+function fetchTimeout(time: number){
+    let controller: AbortController = new AbortController();
+    setTimeout(() => controller.abort(), time * 1000);
+    return controller;
 }
 
 // Receives JSON data from fetch event handler and creates HTML objects of recipes and appends to the HTML.
@@ -322,8 +360,6 @@ function createRecipes(apiData: Recipe[]){
         })
 
         ingredients = ingredients.substring(0, ingredients.length - 2);
-
-        console.log(ingredients);
 
         const dishTypes = document.createElement("p");
         dishTypes.innerHTML = mealTypes;

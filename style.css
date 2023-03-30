@@ -1,7 +1,11 @@
-.btn-info, .btn-danger, .btn-success{
+.btn-info, .btn-danger, .btn-success, .btn-primary{
     border: 3px darkred solid;
     margin-right: 5px;
     margin-bottom: 5px;
+}
+
+.btn-success{
+    margin-right: 20px;
 }
 
 #selectedMeal, #selectedCuisines{

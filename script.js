@@ -1,6 +1,7 @@
 //Settings
 var apiKey = localStorage.getItem("apiKey");
 var maxHits = 2;
+var randomHits = 2;
 //#region /////////////////////////////////|   STORE API-KEY   |/////////////////////////////////
 var inputField = document.getElementById("apiKey-input");
 var submitBtn = document.getElementById("submitKey");
@@ -27,14 +28,14 @@ submitBtn === null || submitBtn === void 0 ? void 0 : submitBtn.addEventListener
 // Array containing all filters we want to have.
 var mealTypes = [
     "Main Course",
-    "Dinner",
+    "Breakfast",
     "Lunch",
+    "Dinner",
     "Side Dish",
     "Dessert",
     "Appetizer",
     "Salad",
     "Bread",
-    "Breakfast",
     "Soup",
     "Beverage",
     "Sauce",
@@ -112,8 +113,9 @@ var mealTypeChoice = "";
 // HTML element to where the values are stored when we click the filter buttons.
 var selectedMeal = document.getElementById("selectedMeal");
 var selectedCuisines = document.getElementById("selectedCuisines");
-// FetchAPI button which will call the API with all selected filter parameters.
+// FetchAPI + Random button which will call the API with all selected filter parameters.
 var fetchBtn = document.getElementById("call-api-btn");
+var randomBtn = document.getElementById("get-random-recipe");
 // HTML element where all recipes are appended, fetch button also clear previous results.
 var recipeResults = document.getElementById("recipe-results");
 // Event listener that looks for clicks in the entire div = all the buttons.
@@ -157,6 +159,15 @@ fetchBtn === null || fetchBtn === void 0 ? void 0 : fetchBtn.addEventListener("c
         .then(function (data) { return createRecipes(data.results); })
         .catch(function () { return alert("Cannot connect, check your API key."); });
 });
+// Event listener for the Random button, will create the URI for API call and receive data as JSON.
+randomBtn === null || randomBtn === void 0 ? void 0 : randomBtn.addEventListener("click", function () {
+    recipeResults.innerHTML = "";
+    var apiString = "https://api.spoonacular.com/recipes/random?apiKey=".concat(apiKey, "&tags=").concat(getMealTypeByTime(), "&number=").concat(randomHits);
+    console.log(encodeURI(apiString));
+    fetch(encodeURI(apiString))
+        .then(function (response) { return response.json(); })
+        .then(function (data) { return createRecipes(data.recipes); });
+});
 //#endregion
 //#region /////////////////////////////////|   FUNCTIONS HERE   |/////////////////////////////////
 // Takes all cuisine choices from the source array and creates a string appropriate for the API URI.
@@ -181,6 +192,27 @@ function cuisineFilter() {
             return returnString.toLowerCase();
         }
     }
+}
+function getMealTypeByTime() {
+    var date = new Date();
+    var hours = date.getHours();
+    if (hours > 3 && hours < 11) {
+        return "breakfast";
+    }
+    else if (hours > 10 && hours < 16) {
+        return "lunch";
+    }
+    else if (hours > 15 && hours < 23) {
+        return "dinner";
+    }
+    else {
+        return "snack";
+    }
+}
+function fetchTimeout(time) {
+    var controller = new AbortController();
+    setTimeout(function () { return controller.abort(); }, time * 1000);
+    return controller;
 }
 // Receives JSON data from fetch event handler and creates HTML objects of recipes and appends to the HTML.
 function createRecipes(apiData) {
@@ -242,7 +274,6 @@ function createRecipes(apiData) {
             });
         });
         ingredients = ingredients.substring(0, ingredients.length - 2);
-        console.log(ingredients);
         var dishTypes = document.createElement("p");
         dishTypes.innerHTML = mealTypes;
         dishTypes.className = "p-types";
