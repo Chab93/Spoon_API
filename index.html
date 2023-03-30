@@ -19,18 +19,34 @@
             <p id="apiKey-p"><b>Stored API key:</b></p>
             <p id="savedKey-p"></p>
             
-            <div>
-                <h3>Meal Types</h3>
-                <div id="mealTypes" class="d-flex flex-wrap"></div>
-                <p id="selectedMeal"></p>
+            <button class="btn btn-warning block" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMeal" aria-expanded="false" aria-controls="collapseMeal">
+                Meal type filter
+            </button>
+            <div class="collapse" id="collapseMeal">
+                <div class="card card-body">
+                    <div>
+                        <h3>Meal Types</h3>
+                        <div id="mealTypes" class="d-flex flex-wrap"></div>
+                        <p id="selectedMeal"></p>
+                    </div>
+                </div>
             </div>
-            <div>
-                <h3>Cuisine Types</h3>
-                <div id="cuisineTypes" class="d-flex flex-wrap"></div>
-                <p id="selectedCuisines"></p>
+
+            <button class="btn btn-warning block" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCuisine" aria-expanded="false" aria-controls="collapseCuisine">
+                Cuisine type filter
+            </button>
+            <div class="collapse" id="collapseCuisine">
+                <div class="card card-body">
+                    <div>
+                        <h3>Cuisine Types</h3>
+                        <div id="cuisineTypes" class="d-flex flex-wrap"></div>
+                        <p id="selectedCuisines"></p>
+                    </div>
+                </div>
             </div>
-            <button id="call-api-btn" class="btn btn-success">Fetch API Data</button>
-            <button id="get-random-recipe" class="btn btn-primary">Get Random</button>
+
+            <button id="call-api-btn" class="btn btn-success mt-5">Fetch API Data</button>
+            <button id="get-random-recipe" class="btn btn-primary mt-5">Get Random</button>
         </div>
         <div id="recipe-results">
 

@@ -1,4 +1,4 @@
-.btn-info, .btn-danger, .btn-success, .btn-primary{
+.btn-info, .btn-danger, .btn-success, .btn-primary, .btn-warning{
     border: 3px darkred solid;
     margin-right: 5px;
     margin-bottom: 5px;
@@ -13,12 +13,13 @@
 }
 
 #filter-div{
-    max-width: 40%;
+    min-width: 40%;
+    height: 100vh;
     border-right: 3px black solid;
 }
 
 #recipe-results{
-    max-width: 60%;
+    min-width: 60%;
 }
 
 .p-types{
