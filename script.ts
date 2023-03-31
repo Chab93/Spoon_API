@@ -1,10 +1,10 @@
-//Settings
+//#region **** Settings ****
 let apiKey: string | null = localStorage.getItem("apiKey");
 const maxHits: number = 2;
 const randomHits: number = 2;
+//#endregion
 
-
-// Interface, allow us in TypeScript to handle the API object correctly with its fields.
+//#region **** Recipe Interface ****
 interface Recipe  {
     id: number;
 
@@ -26,6 +26,9 @@ interface Recipe  {
 
     analyzedInstructions: string[];
 }
+//#endregion
+
+
 
 
 //#region /////////////////////////////////|   STORE API-KEY   |/////////////////////////////////
@@ -55,6 +58,67 @@ submitBtn?.addEventListener("click", () => {
     inputField!.value = "";
 })
 
+//#endregion
+
+
+//#region /////////////////////////////////|   SEARCH INGREDIENTS   |/////////////////////////////////
+
+let ingredientArray: string[] = [];
+
+fetch('./commonIngredients.csv')
+    .then((rawData) => rawData.text())
+    .then((data) => {
+        const ingrArr: string[] = data.split('\r\n');
+        ingredientArray = ingrArr;
+    });
+
+const searchWrapper = document.querySelector(".search-input");
+const inputBox = searchWrapper?.querySelector("input");
+const suggBox = searchWrapper?.querySelector(".autocom-box");
+
+inputBox!.onkeyup = (event) => {
+    //@ts-ignore
+    let userData = event.target.value;
+    let emptyArray: string[] = [];
+
+    if(userData){
+        emptyArray = ingredientArray.filter((data) => {
+            return data.toLowerCase().startsWith(userData.toLowerCase());
+        });
+        emptyArray = emptyArray.map((data) => {
+            return `<li>${data}</li>`;
+        });
+
+        console.log(emptyArray);
+        searchWrapper?.classList.add("active");
+        showSuggestions(emptyArray);
+
+        let allList: NodeListOf<HTMLLIElement> | undefined = suggBox?.querySelectorAll("li");
+        for(let i = 0; i < allList!.length; i++){
+            allList![i].setAttribute("onClick", "selectFromList(this)");
+        }
+
+    } else{
+        searchWrapper?.classList.remove("active");
+    }
+    
+}
+
+function selectFromList(element: HTMLLIElement){
+    let selectUserData = element.textContent;
+    console.log(selectUserData);
+}
+
+function showSuggestions(list: string[]){
+    let listData;
+    if(!list.length){
+        listData = "";
+    } else{
+        listData = list.join('');
+    }
+    //@ts-ignore
+    suggBox.innerHTML = listData;
+}
 //#endregion
 
 

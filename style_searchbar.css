@@ -1,0 +1,44 @@
+.search-input, .autocom-box{
+    padding: 0px;
+    overflow-y: auto;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.search-input.active .autocom-box{
+    padding: 10px 8px;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.autocom-box li{
+    list-style: none;
+    padding: 8px 5px;
+    width: 100%;
+    cursor: default;
+    border-radius: 3%;
+    display: none;
+}
+
+.search-input.active .autocom-box li{
+    display: block;
+}
+
+.autocom-box li:hover{
+    background: lightgreen;
+}
+
+.wrapper{
+    max-width: 400px;;
+}
+
+.wrapper .search-input{
+    background: #fff;
+    width: 100%;
+    border-radius: 5px;
+    box-shadow: 0px 1px 5px 3px rgba(0,0,0,0.12);
+}
+
+.search-input input{
+    width: 100%
+}

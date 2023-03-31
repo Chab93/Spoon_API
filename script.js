@@ -1,7 +1,8 @@
-//Settings
+//#region **** Settings ****
 var apiKey = localStorage.getItem("apiKey");
 var maxHits = 2;
 var randomHits = 2;
+//#endregion
 //#region /////////////////////////////////|   STORE API-KEY   |/////////////////////////////////
 var inputField = document.getElementById("apiKey-input");
 var submitBtn = document.getElementById("submitKey");
@@ -23,6 +24,56 @@ submitBtn === null || submitBtn === void 0 ? void 0 : submitBtn.addEventListener
     //@ts-ignore
     inputField.value = "";
 });
+//#endregion
+//#region /////////////////////////////////|   SEARCH INGREDIENTS   |/////////////////////////////////
+var ingredientArray = [];
+fetch('./commonIngredients.csv')
+    .then(function (rawData) { return rawData.text(); })
+    .then(function (data) {
+    var ingrArr = data.split('\r\n');
+    ingredientArray = ingrArr;
+});
+var searchWrapper = document.querySelector(".search-input");
+var inputBox = searchWrapper === null || searchWrapper === void 0 ? void 0 : searchWrapper.querySelector("input");
+var suggBox = searchWrapper === null || searchWrapper === void 0 ? void 0 : searchWrapper.querySelector(".autocom-box");
+inputBox.onkeyup = function (event) {
+    //@ts-ignore
+    var userData = event.target.value;
+    var emptyArray = [];
+    if (userData) {
+        emptyArray = ingredientArray.filter(function (data) {
+            return data.toLowerCase().startsWith(userData.toLowerCase());
+        });
+        emptyArray = emptyArray.map(function (data) {
+            return "<li>".concat(data, "</li>");
+        });
+        console.log(emptyArray);
+        searchWrapper === null || searchWrapper === void 0 ? void 0 : searchWrapper.classList.add("active");
+        showSuggestions(emptyArray);
+        var allList = suggBox === null || suggBox === void 0 ? void 0 : suggBox.querySelectorAll("li");
+        for (var i = 0; i < allList.length; i++) {
+            allList[i].setAttribute("onClick", "selectFromList(this)");
+        }
+    }
+    else {
+        searchWrapper === null || searchWrapper === void 0 ? void 0 : searchWrapper.classList.remove("active");
+    }
+};
+function selectFromList(element) {
+    var selectUserData = element.textContent;
+    console.log(selectUserData);
+}
+function showSuggestions(list) {
+    var listData;
+    if (!list.length) {
+        listData = "";
+    }
+    else {
+        listData = list.join('');
+    }
+    //@ts-ignore
+    suggBox.innerHTML = listData;
+}
 //#endregion
 //#region /////////////////////////////////|   FILTER BUTTONS CREATED HERE   |/////////////////////////////////
 // Array containing all filters we want to have.
