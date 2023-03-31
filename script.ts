@@ -315,7 +315,7 @@ fetchBtn?.addEventListener("click", () => {
 
     recipeResults!.innerHTML = "";
 
-    let apiString: string = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${apiKey}&type=${mealTypeChoice}&cuisine=${selectionFilter(cuisineChoices)}&intolerance=${selectionFilter(intoleranceChoices)}&diet=${dietChoices}&number=${maxHits}&addRecipeInformation=true`;
+    let apiString: string = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${apiKey}&type=${mealTypeChoice}&cuisine=${selectionFilter(cuisineChoices)}&intolerance=${selectionFilter(intoleranceChoices)}&diet=${selectionFilter(dietChoices)}&number=${maxHits}&addRecipeInformation=true`;
     console.log(encodeURI(apiString))
 
     fetch(encodeURI(apiString))
