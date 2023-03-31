@@ -27,6 +27,9 @@ submitBtn === null || submitBtn === void 0 ? void 0 : submitBtn.addEventListener
 //#endregion
 //#region /////////////////////////////////|   SEARCH INGREDIENTS   |/////////////////////////////////
 var ingredientArray = [];
+var ingredientChoices = [];
+var clearIngredients = document.querySelector(".clear-ingredients");
+var selectedIngredients = document.getElementById("selectedIngredients");
 fetch('./commonIngredients.csv')
     .then(function (rawData) { return rawData.text(); })
     .then(function (data) {
@@ -45,9 +48,8 @@ inputBox.onkeyup = function (event) {
             return data.toLowerCase().startsWith(userData.toLowerCase());
         });
         emptyArray = emptyArray.map(function (data) {
-            return "<li>".concat(data, "</li>");
+            return "<li>".concat(data.toLowerCase(), "</li>");
         });
-        console.log(emptyArray);
         searchWrapper === null || searchWrapper === void 0 ? void 0 : searchWrapper.classList.add("active");
         showSuggestions(emptyArray);
         var allList = suggBox === null || suggBox === void 0 ? void 0 : suggBox.querySelectorAll("li");
@@ -59,9 +61,23 @@ inputBox.onkeyup = function (event) {
         searchWrapper === null || searchWrapper === void 0 ? void 0 : searchWrapper.classList.remove("active");
     }
 };
+suggBox === null || suggBox === void 0 ? void 0 : suggBox.addEventListener("click", function () {
+    suggBox.innerHTML = "";
+    inputBox.value = "";
+});
+clearIngredients === null || clearIngredients === void 0 ? void 0 : clearIngredients.addEventListener("click", function () {
+    ingredientChoices.length = 0;
+    selectedIngredients.innerText = "";
+});
 function selectFromList(element) {
     var selectUserData = element.textContent;
-    console.log(selectUserData);
+    if (!ingredientChoices.includes(selectUserData.toLowerCase())) {
+        ingredientChoices.push(selectUserData.toLowerCase());
+    }
+    else {
+        ingredientChoices.splice(ingredientChoices.indexOf(selectUserData.toLowerCase()), 1);
+    }
+    selectedIngredients.innerText = selectionFilter(ingredientChoices);
 }
 function showSuggestions(list) {
     var listData;

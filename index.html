@@ -88,23 +88,23 @@
             </button>
             <div class="collapse" id="collapseTVMH">
                 <div class="card card-body">
-                    <div>
-                        <h3>Tager vad man haver</h3>
+                    <h3>Tager vad man haver</h3>
+                    <div class="d-flex">
                         <div class="wrapper">
                             <div class="search-input">
                                 <input type="text" placeholder="Enter ingredients....">
                                 <div class="autocom-box"></div>
                             </div>
                         </div>
+                        <button class="btn btn-danger clear-ingredients" type="button">Clear</button>
                     </div>
+                    <p id="selectedIngredients"></p>
                 </div>
             </div>
-
             <button id="call-api-btn" class="btn btn-success mt-5">Fetch API Data</button>
             <button id="get-random-recipe" class="btn btn-success mt-5">Get Random</button>
         </div>
         <div id="recipe-results">
-
         </div>
     </div>
 

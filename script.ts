@@ -64,6 +64,9 @@ submitBtn?.addEventListener("click", () => {
 //#region /////////////////////////////////|   SEARCH INGREDIENTS   |/////////////////////////////////
 
 let ingredientArray: string[] = [];
+let ingredientChoices: string[] = [];
+const clearIngredients = document.querySelector(".clear-ingredients");
+const selectedIngredients = document.getElementById("selectedIngredients");
 
 fetch('./commonIngredients.csv')
     .then((rawData) => rawData.text())
@@ -86,10 +89,9 @@ inputBox!.onkeyup = (event) => {
             return data.toLowerCase().startsWith(userData.toLowerCase());
         });
         emptyArray = emptyArray.map((data) => {
-            return `<li>${data}</li>`;
+            return `<li>${data.toLowerCase()}</li>`;
         });
 
-        console.log(emptyArray);
         searchWrapper?.classList.add("active");
         showSuggestions(emptyArray);
 
@@ -101,12 +103,28 @@ inputBox!.onkeyup = (event) => {
     } else{
         searchWrapper?.classList.remove("active");
     }
-    
 }
 
+suggBox?.addEventListener("click", () => {
+    suggBox.innerHTML = "";
+    inputBox!.value = "";
+})
+
+clearIngredients?.addEventListener("click", () => {
+    ingredientChoices.length = 0;
+    selectedIngredients!.innerText = "";
+})
+
 function selectFromList(element: HTMLLIElement){
-    let selectUserData = element.textContent;
-    console.log(selectUserData);
+    let selectUserData: string | null = element.textContent;
+
+    if(!ingredientChoices.includes(selectUserData!.toLowerCase())){
+        ingredientChoices.push(selectUserData!.toLowerCase());
+    } else{
+        ingredientChoices.splice(ingredientChoices.indexOf(selectUserData!.toLowerCase()), 1)
+    }
+
+    selectedIngredients!.innerText = selectionFilter(ingredientChoices);
 }
 
 function showSuggestions(list: string[]){

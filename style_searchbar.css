@@ -29,7 +29,10 @@
 }
 
 .wrapper{
-    max-width: 400px;;
+    padding-top: 4px;
+    width: 50%;
+    max-width: 350px;
+    margin-right: 20px;
 }
 
 .wrapper .search-input{
@@ -41,4 +44,12 @@
 
 .search-input input{
     width: 100%
+}
+
+.suggBox-show{
+    display: auto;
+}
+
+.suggBox-hide{
+    display: none;
 }
