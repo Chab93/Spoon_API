@@ -72,9 +72,38 @@ var cuisines = [
     "Thai",
     "Vietnamese"
 ];
+var intolerances = [
+    "Dairy",
+    "Egg",
+    "Gluten",
+    "Grain",
+    "Peanut",
+    "Seafood",
+    "Sesame",
+    "Shellfish",
+    "Soy",
+    "Sulfite",
+    "Tree Nut",
+    "Wheat"
+];
+var diets = [
+    "Gluten Free",
+    "Ketogenic",
+    "Vegetarian",
+    "Lacto-Vegetarian",
+    "Ovo-Vegetarian",
+    "Vegan",
+    "Pescetarian",
+    "Paleo",
+    "Primal",
+    "Low FODMAP",
+    "Whole30"
+];
 // Create objects representing the DIV elements in the HTML code.
 var mealDiv = document.getElementById("mealTypes");
 var cuisineDiv = document.getElementById("cuisineTypes");
+var intoleranceDiv = document.getElementById("intoleranceTypes");
+var dietDiv = document.getElementById("dietTypes");
 //Creates filter buttons for all meal types and appends them to selected div.
 mealTypes.forEach(function (meal, index) {
     var tmpBtn = document.createElement("button");
@@ -105,20 +134,52 @@ cuisines.forEach(function (cuisine, index) {
         cuisineDiv.appendChild(tmpBtn2);
     }
 });
+intolerances.forEach(function (intolerance, index) {
+    var tmpBtn = document.createElement("button");
+    tmpBtn.textContent = intolerance;
+    tmpBtn.id = intolerance;
+    tmpBtn.className = "btn btn-info";
+    intoleranceDiv.appendChild(tmpBtn);
+    if (index + 1 == intolerances.length) {
+        var tmpBtn2 = document.createElement("button");
+        tmpBtn2.textContent = "Clear";
+        tmpBtn2.id = "clear-intolerance";
+        tmpBtn2.className = "btn btn-danger";
+        intoleranceDiv.appendChild(tmpBtn2);
+    }
+});
+diets.forEach(function (diet, index) {
+    var tmpBtn = document.createElement("button");
+    tmpBtn.textContent = diet;
+    tmpBtn.id = diet;
+    tmpBtn.className = "btn btn-info";
+    dietDiv.appendChild(tmpBtn);
+    if (index + 1 == diets.length) {
+        var tmpBtn2 = document.createElement("button");
+        tmpBtn2.textContent = "Clear";
+        tmpBtn2.id = "clear-diet";
+        tmpBtn2.className = "btn btn-danger";
+        dietDiv.appendChild(tmpBtn2);
+    }
+});
 //#endregion
 //#region /////////////////////////////////|   EVENT LISTENERS HERE   |/////////////////////////////////
 // Variable where data is stored before it is passed to HTML elements.
 var cuisineChoices = [];
+var intoleranceChoices = [];
+var dietChoices = [];
 var mealTypeChoice = "";
 // HTML element to where the values are stored when we click the filter buttons.
 var selectedMeal = document.getElementById("selectedMeal");
 var selectedCuisines = document.getElementById("selectedCuisines");
+var selectedIntolerances = document.getElementById("selectedIntolerances");
+var selectedDiets = document.getElementById("selectedDiets");
 // FetchAPI + Random button which will call the API with all selected filter parameters.
 var fetchBtn = document.getElementById("call-api-btn");
 var randomBtn = document.getElementById("get-random-recipe");
 // HTML element where all recipes are appended, fetch button also clear previous results.
 var recipeResults = document.getElementById("recipe-results");
-// Event listener that looks for clicks in the entire div = all the buttons.
+// Event listener that looks for clicks in the entire meal div = all the buttons.
 mealDiv === null || mealDiv === void 0 ? void 0 : mealDiv.addEventListener("click", function (event) {
     var btnInfo = event.target;
     if (btnInfo.nodeName == "BUTTON") {
@@ -132,7 +193,7 @@ mealDiv === null || mealDiv === void 0 ? void 0 : mealDiv.addEventListener("clic
         }
     }
 });
-// Event listener that looks for clicks in the entire div = all the buttons.
+// Event listener that looks for clicks in the entire cuisine div = all the buttons.
 cuisineDiv === null || cuisineDiv === void 0 ? void 0 : cuisineDiv.addEventListener("click", function (event) {
     var btnInfo = event.target;
     if (btnInfo.nodeName == "BUTTON") {
@@ -147,13 +208,49 @@ cuisineDiv === null || cuisineDiv === void 0 ? void 0 : cuisineDiv.addEventListe
                 cuisineChoices.splice(cuisineChoices.indexOf(btnInfo.innerText.toLowerCase()), 1);
             }
         }
-        selectedCuisines.innerText = cuisineFilter();
+        selectedCuisines.innerText = selectionFilter(cuisineChoices);
+    }
+});
+// Event listener that looks for clicks in the entire intolerance div = all the buttons.
+intoleranceDiv === null || intoleranceDiv === void 0 ? void 0 : intoleranceDiv.addEventListener("click", function (event) {
+    var btnInfo = event.target;
+    if (btnInfo.nodeName == "BUTTON") {
+        if (btnInfo.innerText == "Clear") {
+            intoleranceChoices.length = 0;
+        }
+        else {
+            if (!intoleranceChoices.includes(btnInfo.innerText.toLowerCase())) {
+                intoleranceChoices.push(btnInfo.innerText.toLowerCase());
+            }
+            else {
+                intoleranceChoices.splice(intoleranceChoices.indexOf(btnInfo.innerText.toLowerCase()), 1);
+            }
+        }
+        selectedIntolerances.innerText = selectionFilter(intoleranceChoices);
+    }
+});
+// Event listener that looks for clicks in the entire diet div = all the buttons.
+dietDiv === null || dietDiv === void 0 ? void 0 : dietDiv.addEventListener("click", function (event) {
+    var btnInfo = event.target;
+    if (btnInfo.nodeName == "BUTTON") {
+        if (btnInfo.innerText == "Clear") {
+            dietChoices.length = 0;
+        }
+        else {
+            if (!dietChoices.includes(btnInfo.innerText.toLowerCase())) {
+                dietChoices.push(btnInfo.innerText.toLowerCase());
+            }
+            else {
+                dietChoices.splice(dietChoices.indexOf(btnInfo.innerText.toLowerCase()), 1);
+            }
+        }
+        selectedDiets.innerText = selectionFilter(dietChoices);
     }
 });
 // Event listener for the Fetch button, will create the URI for API call and receive data as JSON.
 fetchBtn === null || fetchBtn === void 0 ? void 0 : fetchBtn.addEventListener("click", function () {
     recipeResults.innerHTML = "";
-    var apiString = "https://api.spoonacular.com/recipes/complexSearch?apiKey=".concat(apiKey, "&cuisine=").concat(cuisineFilter(), "&type=").concat(mealTypeChoice, "&number=").concat(maxHits, "&addRecipeInformation=true");
+    var apiString = "https://api.spoonacular.com/recipes/complexSearch?apiKey=".concat(apiKey, "&type=").concat(mealTypeChoice, "&cuisine=").concat(selectionFilter(cuisineChoices), "&intolerance=").concat(selectionFilter(intoleranceChoices), "&diet=").concat(dietChoices, "&number=").concat(maxHits, "&addRecipeInformation=true");
     console.log(encodeURI(apiString));
     fetch(encodeURI(apiString))
         .then(function (response) { return response.json(); })
@@ -172,18 +269,18 @@ randomBtn === null || randomBtn === void 0 ? void 0 : randomBtn.addEventListener
 //#endregion
 //#region /////////////////////////////////|   FUNCTIONS HERE   |/////////////////////////////////
 // Takes all cuisine choices from the source array and creates a string appropriate for the API URI.
-function cuisineFilter() {
+function selectionFilter(inputArray) {
     var returnString = "";
-    if (cuisineChoices.length <= 0) {
+    if (inputArray.length <= 0) {
         return "";
     }
     else {
-        if (cuisineChoices.length == 1) {
-            return cuisineChoices[0];
+        if (inputArray.length == 1) {
+            return inputArray[0];
         }
         else {
-            cuisineChoices.forEach(function (item, index) {
-                if (index + 1 < cuisineChoices.length) {
+            inputArray.forEach(function (item, index) {
+                if (index + 1 < inputArray.length) {
                     returnString += "".concat(item, ",");
                 }
                 else {

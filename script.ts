@@ -107,10 +107,39 @@ const cuisines: string[] = [
     "Thai",
     "Vietnamese"
 ];
+const intolerances: string[] = [
+    "Dairy",
+    "Egg",
+    "Gluten",
+    "Grain",
+    "Peanut",
+    "Seafood",
+    "Sesame",
+    "Shellfish",
+    "Soy",
+    "Sulfite",
+    "Tree Nut",
+    "Wheat"
+]
+const diets: string[] = [
+    "Gluten Free",
+    "Ketogenic",
+    "Vegetarian",
+    "Lacto-Vegetarian",
+    "Ovo-Vegetarian",
+    "Vegan",
+    "Pescetarian",
+    "Paleo",
+    "Primal",
+    "Low FODMAP",
+    "Whole30"
+]
 
 // Create objects representing the DIV elements in the HTML code.
 const mealDiv: HTMLElement | null = document.getElementById("mealTypes");
 const cuisineDiv: HTMLElement | null = document.getElementById("cuisineTypes");
+const intoleranceDiv: HTMLElement | null = document.getElementById("intoleranceTypes");
+const dietDiv: HTMLElement | null = document.getElementById("dietTypes");
 
 //Creates filter buttons for all meal types and appends them to selected div.
 mealTypes.forEach((meal: string, index: number) => {
@@ -149,17 +178,57 @@ cuisines.forEach((cuisine: string, index: number) => {
         cuisineDiv!.appendChild(tmpBtn2);
     }
 })
+
+intolerances.forEach((intolerance: string, index: number) => {
+    const tmpBtn = document.createElement("button");
+
+    tmpBtn.textContent = intolerance;
+    tmpBtn.id = intolerance;
+    tmpBtn.className = "btn btn-info";
+    intoleranceDiv!.appendChild(tmpBtn);
+
+    if(index + 1 == intolerances.length){
+        const tmpBtn2 = document.createElement("button");
+        
+        tmpBtn2.textContent = "Clear";
+        tmpBtn2.id = "clear-intolerance";
+        tmpBtn2.className = "btn btn-danger";
+        intoleranceDiv!.appendChild(tmpBtn2);
+    }
+})
+
+diets.forEach((diet: string, index: number) => {
+    const tmpBtn = document.createElement("button");
+
+    tmpBtn.textContent = diet;
+    tmpBtn.id = diet;
+    tmpBtn.className = "btn btn-info";
+    dietDiv!.appendChild(tmpBtn);
+
+    if(index + 1 == diets.length){
+        const tmpBtn2 = document.createElement("button");
+        
+        tmpBtn2.textContent = "Clear";
+        tmpBtn2.id = "clear-diet";
+        tmpBtn2.className = "btn btn-danger";
+        dietDiv!.appendChild(tmpBtn2);
+    }
+})
 //#endregion
 
 
 //#region /////////////////////////////////|   EVENT LISTENERS HERE   |/////////////////////////////////
 // Variable where data is stored before it is passed to HTML elements.
 let cuisineChoices: string[] = [];
+let intoleranceChoices: string[] = [];
+let dietChoices: string[] = [];
 let mealTypeChoice: string = "";
 
 // HTML element to where the values are stored when we click the filter buttons.
 const selectedMeal: HTMLElement | null = document.getElementById("selectedMeal");
 const selectedCuisines: HTMLElement | null = document.getElementById("selectedCuisines");
+const selectedIntolerances: HTMLElement | null = document.getElementById("selectedIntolerances");
+const selectedDiets: HTMLElement | null = document.getElementById("selectedDiets");
 
 // FetchAPI + Random button which will call the API with all selected filter parameters.
 const fetchBtn: HTMLElement | null = document.getElementById("call-api-btn");
@@ -168,7 +237,7 @@ const randomBtn: HTMLElement | null = document.getElementById("get-random-recipe
 // HTML element where all recipes are appended, fetch button also clear previous results.
 const recipeResults: HTMLElement | null = document.getElementById("recipe-results");
 
-// Event listener that looks for clicks in the entire div = all the buttons.
+// Event listener that looks for clicks in the entire meal div = all the buttons.
 mealDiv?.addEventListener("click", (event) => {
 
     const btnInfo: HTMLButtonElement = (event.target as HTMLButtonElement);
@@ -184,7 +253,7 @@ mealDiv?.addEventListener("click", (event) => {
     }
 })
 
-// Event listener that looks for clicks in the entire div = all the buttons.
+// Event listener that looks for clicks in the entire cuisine div = all the buttons.
 cuisineDiv?.addEventListener("click", (event) => {
     const btnInfo: HTMLButtonElement = (event.target as HTMLButtonElement);
 
@@ -199,7 +268,45 @@ cuisineDiv?.addEventListener("click", (event) => {
             }
         }
 
-        selectedCuisines!.innerText = cuisineFilter();
+        selectedCuisines!.innerText = selectionFilter(cuisineChoices);
+    }
+})
+
+// Event listener that looks for clicks in the entire intolerance div = all the buttons.
+intoleranceDiv?.addEventListener("click", (event) => {
+    const btnInfo: HTMLButtonElement = (event.target as HTMLButtonElement);
+
+    if (btnInfo.nodeName == "BUTTON"){
+        if(btnInfo.innerText == "Clear"){
+            intoleranceChoices.length = 0;
+        } else {
+            if(!intoleranceChoices.includes(btnInfo.innerText.toLowerCase())){
+                intoleranceChoices.push(btnInfo.innerText.toLowerCase());
+            } else{
+                intoleranceChoices.splice(intoleranceChoices.indexOf(btnInfo.innerText.toLowerCase()), 1)
+            }
+        }
+
+        selectedIntolerances!.innerText = selectionFilter(intoleranceChoices);
+    }
+})
+
+// Event listener that looks for clicks in the entire diet div = all the buttons.
+dietDiv?.addEventListener("click", (event) => {
+    const btnInfo: HTMLButtonElement = (event.target as HTMLButtonElement);
+
+    if (btnInfo.nodeName == "BUTTON"){
+        if(btnInfo.innerText == "Clear"){
+            dietChoices.length = 0;
+        } else {
+            if(!dietChoices.includes(btnInfo.innerText.toLowerCase())){
+                dietChoices.push(btnInfo.innerText.toLowerCase());
+            } else{
+                dietChoices.splice(dietChoices.indexOf(btnInfo.innerText.toLowerCase()), 1)
+            }
+        }
+
+        selectedDiets!.innerText = selectionFilter(dietChoices);
     }
 })
 
@@ -208,7 +315,7 @@ fetchBtn?.addEventListener("click", () => {
 
     recipeResults!.innerHTML = "";
 
-    let apiString: string = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${apiKey}&cuisine=${cuisineFilter()}&type=${mealTypeChoice}&number=${maxHits}&addRecipeInformation=true`;
+    let apiString: string = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${apiKey}&type=${mealTypeChoice}&cuisine=${selectionFilter(cuisineChoices)}&intolerance=${selectionFilter(intoleranceChoices)}&diet=${dietChoices}&number=${maxHits}&addRecipeInformation=true`;
     console.log(encodeURI(apiString))
 
     fetch(encodeURI(apiString))
@@ -236,17 +343,17 @@ randomBtn?.addEventListener("click", () => {
 //#region /////////////////////////////////|   FUNCTIONS HERE   |/////////////////////////////////
 
 // Takes all cuisine choices from the source array and creates a string appropriate for the API URI.
-function cuisineFilter(){
+function selectionFilter(inputArray: string[]){
     let returnString: string = "";
 
-    if(cuisineChoices.length <= 0){
+    if(inputArray.length <= 0){
         return "";
     } else{
-        if(cuisineChoices.length == 1){
-            return cuisineChoices[0];
+        if(inputArray.length == 1){
+            return inputArray[0];
         } else{
-            cuisineChoices.forEach((item: string, index: number) => {
-                if(index + 1 < cuisineChoices.length){
+            inputArray.forEach((item: string, index: number) => {
+                if(index + 1 < inputArray.length){
                     returnString += `${item},`;
                 } else{
                     returnString += item;

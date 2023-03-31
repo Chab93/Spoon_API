@@ -14,12 +14,12 @@
 
 #filter-div{
     min-width: 40%;
-    height: 100vh;
-    border-right: 3px black solid;
 }
 
 #recipe-results{
     min-width: 60%;
+    min-height: 100vh;
+    border-left: 3px black solid;
 }
 
 .p-types{

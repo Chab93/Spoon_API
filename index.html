@@ -45,6 +45,32 @@
                 </div>
             </div>
 
+            <button class="btn btn-warning block" type="button" data-bs-toggle="collapse" data-bs-target="#collapseIntolerances" aria-expanded="false" aria-controls="collapseIntolerances">
+                Intolerance type filter
+            </button>
+            <div class="collapse" id="collapseIntolerances">
+                <div class="card card-body">
+                    <div>
+                        <h3>Intolerance Types</h3>
+                        <div id="intoleranceTypes" class="d-flex flex-wrap"></div>
+                        <p id="selectedIntolerances"></p>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-warning block" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDiets" aria-expanded="false" aria-controls="collapseDiets">
+                Diet type filter
+            </button>
+            <div class="collapse" id="collapseDiets">
+                <div class="card card-body">
+                    <div>
+                        <h3>Diet Types</h3>
+                        <div id="dietTypes" class="d-flex flex-wrap"></div>
+                        <p id="selectedDiets"></p>
+                    </div>
+                </div>
+            </div>
+
             <button id="call-api-btn" class="btn btn-success mt-5">Fetch API Data</button>
             <button id="get-random-recipe" class="btn btn-primary mt-5">Get Random</button>
         </div>
