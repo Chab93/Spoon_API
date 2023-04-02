@@ -32,11 +32,12 @@
 }
 
 .p-ingredients{
-    margin: 0px;
-    margin-top: 10px;
-    margin-bottom: 20px;
-    padding-bottom: 20px;
+margin-top: 20px;
+}
+
+.p-instructions{
     border-bottom: 2px black solid;
+    padding-bottom: 20px;
 }
 
 .false-red{

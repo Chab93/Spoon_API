@@ -415,7 +415,7 @@ fetchBtn?.addEventListener("click", () => {
 
     recipeResults!.innerHTML = "";
 
-    let apiString: string = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${apiKey}&type=${mealTypeChoice}&cuisine=${selectionFilter(cuisineChoices)}&intolerance=${selectionFilter(intoleranceChoices)}&diet=${selectionFilter(dietChoices)}&number=${maxHits}&addRecipeInformation=true`;
+    let apiString: string = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${apiKey}&type=${mealTypeChoice}&cuisine=${selectionFilter(cuisineChoices)}&intolerance=${selectionFilter(intoleranceChoices)}&diet=${selectionFilter(dietChoices)}&number=${maxHits}&addRecipeInformation=true&addRecipeNutrition=true`;
     console.log(encodeURI(apiString))
 
     fetch(encodeURI(apiString))
@@ -567,12 +567,11 @@ function createRecipes(apiData: Recipe[]){
 
         let ingredients: string = "<b>Ingredients:</b><br>";
 
-        
         recipe.analyzedInstructions.forEach((item) => {
             //@ts-ignore
             item.steps.forEach((step) => {
                 //@ts-ignore
-                step.ingredients.forEach((ingr, index: number) => {
+                step.ingredients.forEach((ingr) => {
                     if(ingr.name.length > 0){
                         ingredients += ingr.name.charAt(0).toUpperCase() + ingr.name.slice(1) + ", ";
                     }
@@ -582,6 +581,25 @@ function createRecipes(apiData: Recipe[]){
         })
 
         ingredients = ingredients.substring(0, ingredients.length - 2);
+
+        let steps: string = "<b>Instructions:</b><br>";
+
+        recipe.analyzedInstructions.forEach((item) => {
+            //@ts-ignore
+            item.steps.forEach((step: string[], index: number) => {
+                //@ts-ignore
+                steps += `<b>Step: ${step.number}</b><br><i>${step.step}</i>`
+                //@ts-ignore
+                if(index + 1 < item.steps.length){
+                    steps += "<br><br>"
+                }
+            })
+        })
+
+        //@ts-ignore
+        recipe.nutrition.nutrients.forEach((item) => {
+            console.log(item.name + " | " + item.amount + " " + item.unit)
+        })
 
         const dishTypes = document.createElement("p");
         dishTypes.innerHTML = mealTypes;
@@ -599,6 +617,10 @@ function createRecipes(apiData: Recipe[]){
         ingredientList.innerHTML = ingredients;
         ingredientList.className = "p-ingredients";
 
+        const instructions = document.createElement("p");
+        instructions.innerHTML = steps;
+        instructions.className = "p-instructions";
+
         list.appendChild(vegetarian);
         list.appendChild(vegan);
         list.appendChild(glutenFree);
@@ -614,12 +636,12 @@ function createRecipes(apiData: Recipe[]){
         tmpDiv.appendChild(cuisineList);
         tmpDiv.appendChild(dietList);
         tmpDiv.appendChild(ingredientList);
+        tmpDiv.appendChild(instructions);
         recipeResults?.appendChild(tmpDiv);
     })
 }
 
 function createTVMHResults(apiData: RecipeTVMH[]){
-    console.log(apiData);
 
     apiData.forEach((recipe) => {
 
@@ -692,7 +714,7 @@ function createTVMHResults(apiData: RecipeTVMH[]){
                 unusedIngredients += ingredient.name.charAt(0).toUpperCase() + ingredient.name.slice(1);
             }
 
-            if(index + 1 < recipe.usedIngredients.length){
+            if(index + 1 < recipe.unusedIngredients.length){
                 unusedIngredients += ", ";
             }
         })

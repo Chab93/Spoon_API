@@ -319,7 +319,7 @@ dietDiv === null || dietDiv === void 0 ? void 0 : dietDiv.addEventListener("clic
 // Event listener for the Fetch button, will create the URI for API call and receive data as JSON.
 fetchBtn === null || fetchBtn === void 0 ? void 0 : fetchBtn.addEventListener("click", function () {
     recipeResults.innerHTML = "";
-    var apiString = "https://api.spoonacular.com/recipes/complexSearch?apiKey=".concat(apiKey, "&type=").concat(mealTypeChoice, "&cuisine=").concat(selectionFilter(cuisineChoices), "&intolerance=").concat(selectionFilter(intoleranceChoices), "&diet=").concat(selectionFilter(dietChoices), "&number=").concat(maxHits, "&addRecipeInformation=true");
+    var apiString = "https://api.spoonacular.com/recipes/complexSearch?apiKey=".concat(apiKey, "&type=").concat(mealTypeChoice, "&cuisine=").concat(selectionFilter(cuisineChoices), "&intolerance=").concat(selectionFilter(intoleranceChoices), "&diet=").concat(selectionFilter(dietChoices), "&number=").concat(maxHits, "&addRecipeInformation=true&addRecipeNutrition=true");
     console.log(encodeURI(apiString));
     fetch(encodeURI(apiString))
         .then(function (response) { return response.json(); })
@@ -442,7 +442,7 @@ function createRecipes(apiData) {
             //@ts-ignore
             item.steps.forEach(function (step) {
                 //@ts-ignore
-                step.ingredients.forEach(function (ingr, index) {
+                step.ingredients.forEach(function (ingr) {
                     if (ingr.name.length > 0) {
                         ingredients += ingr.name.charAt(0).toUpperCase() + ingr.name.slice(1) + ", ";
                     }
@@ -450,6 +450,22 @@ function createRecipes(apiData) {
             });
         });
         ingredients = ingredients.substring(0, ingredients.length - 2);
+        var steps = "<b>Instructions:</b><br>";
+        recipe.analyzedInstructions.forEach(function (item) {
+            //@ts-ignore
+            item.steps.forEach(function (step, index) {
+                //@ts-ignore
+                steps += "<b>Step: ".concat(step.number, "</b><br><i>").concat(step.step, "</i>");
+                //@ts-ignore
+                if (index + 1 < item.steps.length) {
+                    steps += "<br><br>";
+                }
+            });
+        });
+        //@ts-ignore
+        recipe.nutrition.nutrients.forEach(function (item) {
+            console.log(item.name + " | " + item.amount + " " + item.unit);
+        });
         var dishTypes = document.createElement("p");
         dishTypes.innerHTML = mealTypes;
         dishTypes.className = "p-types";
@@ -462,6 +478,9 @@ function createRecipes(apiData) {
         var ingredientList = document.createElement("p");
         ingredientList.innerHTML = ingredients;
         ingredientList.className = "p-ingredients";
+        var instructions = document.createElement("p");
+        instructions.innerHTML = steps;
+        instructions.className = "p-instructions";
         list.appendChild(vegetarian);
         list.appendChild(vegan);
         list.appendChild(glutenFree);
@@ -475,11 +494,11 @@ function createRecipes(apiData) {
         tmpDiv.appendChild(cuisineList);
         tmpDiv.appendChild(dietList);
         tmpDiv.appendChild(ingredientList);
+        tmpDiv.appendChild(instructions);
         recipeResults === null || recipeResults === void 0 ? void 0 : recipeResults.appendChild(tmpDiv);
     });
 }
 function createTVMHResults(apiData) {
-    console.log(apiData);
     apiData.forEach(function (recipe) {
         var missedIngredients = "";
         var usedIngredients = "";
@@ -539,7 +558,7 @@ function createTVMHResults(apiData) {
                 //@ts-ignore
                 unusedIngredients += ingredient.name.charAt(0).toUpperCase() + ingredient.name.slice(1);
             }
-            if (index + 1 < recipe.usedIngredients.length) {
+            if (index + 1 < recipe.unusedIngredients.length) {
                 unusedIngredients += ", ";
             }
         });
