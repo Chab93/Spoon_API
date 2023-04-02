@@ -3,6 +3,7 @@ let apiKey: string | null = localStorage.getItem("apiKey");
 const maxHits: number = 2;
 const randomHits: number = 2;
 const tvmhHits: number = 2;
+const addRecipeNutrition: boolean = true;
 //#endregion
 
 //#region /////////////////////////////////|   INTERFACES   |/////////////////////////////////
@@ -415,12 +416,12 @@ fetchBtn?.addEventListener("click", () => {
 
     recipeResults!.innerHTML = "";
 
-    let apiString: string = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${apiKey}&type=${mealTypeChoice}&cuisine=${selectionFilter(cuisineChoices)}&intolerance=${selectionFilter(intoleranceChoices)}&diet=${selectionFilter(dietChoices)}&number=${maxHits}&addRecipeInformation=true&addRecipeNutrition=true`;
+    let apiString: string = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${apiKey}&type=${mealTypeChoice}&cuisine=${selectionFilter(cuisineChoices)}&intolerance=${selectionFilter(intoleranceChoices)}&diet=${selectionFilter(dietChoices)}&number=${maxHits}&addRecipeInformation=true&addRecipeNutrition=${addRecipeNutrition}`;
     console.log(encodeURI(apiString))
 
     fetch(encodeURI(apiString))
         .then((response) => response.json())
-        .then((data) => createRecipes(data.results, true))
+        .then((data) => createRecipes(data.results, addRecipeNutrition))
         .catch(() => alert("Cannot connect, check your API key."))
 })
 

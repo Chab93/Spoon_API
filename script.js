@@ -3,6 +3,7 @@ var apiKey = localStorage.getItem("apiKey");
 var maxHits = 2;
 var randomHits = 2;
 var tvmhHits = 2;
+var addRecipeNutrition = true;
 //#endregion
 //#region /////////////////////////////////|   STORE API-KEY   |/////////////////////////////////
 var inputField = document.getElementById("apiKey-input");
@@ -319,11 +320,11 @@ dietDiv === null || dietDiv === void 0 ? void 0 : dietDiv.addEventListener("clic
 // Event listener for the Fetch button, will create the URI for API call and receive data as JSON.
 fetchBtn === null || fetchBtn === void 0 ? void 0 : fetchBtn.addEventListener("click", function () {
     recipeResults.innerHTML = "";
-    var apiString = "https://api.spoonacular.com/recipes/complexSearch?apiKey=".concat(apiKey, "&type=").concat(mealTypeChoice, "&cuisine=").concat(selectionFilter(cuisineChoices), "&intolerance=").concat(selectionFilter(intoleranceChoices), "&diet=").concat(selectionFilter(dietChoices), "&number=").concat(maxHits, "&addRecipeInformation=true&addRecipeNutrition=true");
+    var apiString = "https://api.spoonacular.com/recipes/complexSearch?apiKey=".concat(apiKey, "&type=").concat(mealTypeChoice, "&cuisine=").concat(selectionFilter(cuisineChoices), "&intolerance=").concat(selectionFilter(intoleranceChoices), "&diet=").concat(selectionFilter(dietChoices), "&number=").concat(maxHits, "&addRecipeInformation=true&addRecipeNutrition=").concat(addRecipeNutrition);
     console.log(encodeURI(apiString));
     fetch(encodeURI(apiString))
         .then(function (response) { return response.json(); })
-        .then(function (data) { return createRecipes(data.results, true); })
+        .then(function (data) { return createRecipes(data.results, addRecipeNutrition); })
         .catch(function () { return alert("Cannot connect, check your API key."); });
 });
 tvmhBtn === null || tvmhBtn === void 0 ? void 0 : tvmhBtn.addEventListener("click", function () {
