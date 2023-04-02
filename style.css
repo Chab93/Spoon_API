@@ -5,7 +5,7 @@
 }
 
 .btn-success{
-    margin-right: 20px;
+    margin-right: 10px;
 }
 
 #selectedMeal, #selectedCuisines{
@@ -66,4 +66,13 @@
 .clear-ingredients{
     width: 70px;
     height: 40px;
+}
+
+.ingr-h6{
+    margin-bottom: 4px;
+}
+
+.unused-p{
+    padding-bottom: 20px;
+    border-bottom: 2px black solid;
 }

@@ -2,6 +2,7 @@
 var apiKey = localStorage.getItem("apiKey");
 var maxHits = 2;
 var randomHits = 2;
+var tvmhHits = 2;
 //#endregion
 //#region /////////////////////////////////|   STORE API-KEY   |/////////////////////////////////
 var inputField = document.getElementById("apiKey-input");
@@ -241,9 +242,10 @@ var selectedMeal = document.getElementById("selectedMeal");
 var selectedCuisines = document.getElementById("selectedCuisines");
 var selectedIntolerances = document.getElementById("selectedIntolerances");
 var selectedDiets = document.getElementById("selectedDiets");
-// FetchAPI + Random button which will call the API with all selected filter parameters.
+// Buttons which will call the API with all selected filter parameters.
 var fetchBtn = document.getElementById("call-api-btn");
 var randomBtn = document.getElementById("get-random-recipe");
+var tvmhBtn = document.getElementById("get-tvmh-recipe");
 // HTML element where all recipes are appended, fetch button also clear previous results.
 var recipeResults = document.getElementById("recipe-results");
 // Event listener that looks for clicks in the entire meal div = all the buttons.
@@ -322,6 +324,15 @@ fetchBtn === null || fetchBtn === void 0 ? void 0 : fetchBtn.addEventListener("c
     fetch(encodeURI(apiString))
         .then(function (response) { return response.json(); })
         .then(function (data) { return createRecipes(data.results); })
+        .catch(function () { return alert("Cannot connect, check your API key."); });
+});
+tvmhBtn === null || tvmhBtn === void 0 ? void 0 : tvmhBtn.addEventListener("click", function () {
+    recipeResults.innerHTML = "";
+    var apiString = "https://api.spoonacular.com/recipes/findByIngredients?apiKey=".concat(apiKey, "&ingredients=").concat(selectionFilter(ingredientChoices), "&ranking=2&ignorePantry=true&number=").concat(tvmhHits);
+    console.log(encodeURI(apiString));
+    fetch(encodeURI(apiString))
+        .then(function (response) { return response.json(); })
+        .then(function (data) { return createTVMHResults(data); })
         .catch(function () { return alert("Cannot connect, check your API key."); });
 });
 // Event listener for the Random button, will create the URI for API call and receive data as JSON.
@@ -464,6 +475,91 @@ function createRecipes(apiData) {
         tmpDiv.appendChild(cuisineList);
         tmpDiv.appendChild(dietList);
         tmpDiv.appendChild(ingredientList);
+        recipeResults === null || recipeResults === void 0 ? void 0 : recipeResults.appendChild(tmpDiv);
+    });
+}
+function createTVMHResults(apiData) {
+    console.log(apiData);
+    apiData.forEach(function (recipe) {
+        var missedIngredients = "";
+        var usedIngredients = "";
+        var unusedIngredients = "";
+        var tmpDiv = document.createElement("div");
+        var title = document.createElement("h5");
+        title.innerHTML = "".concat(recipe.title, "<br>ID: ").concat(recipe.id);
+        var image = document.createElement("img");
+        image.src = recipe.image;
+        var noMissedIngr = document.createElement("h6");
+        noMissedIngr.className = "ingr-h6";
+        noMissedIngr.innerHTML = "Missed ingredients: ".concat(recipe.missedIngredientCount);
+        recipe.missedIngredients.forEach(function (ingredient, index) {
+            //@ts-ignore
+            if (ingredient.name.includes("*")) {
+                //@ts-ignore
+                var tmpIngredient = ingredient.name.substring(0, ingredient.name.indexOf("*") - 1);
+                missedIngredients += tmpIngredient.charAt(0).toUpperCase() + tmpIngredient.slice(1);
+            }
+            else {
+                //@ts-ignore
+                missedIngredients += ingredient.name.charAt(0).toUpperCase() + ingredient.name.slice(1);
+            }
+            if (index + 1 < recipe.missedIngredients.length) {
+                missedIngredients += ", ";
+            }
+        });
+        var noUsedIngr = document.createElement("h6");
+        noUsedIngr.className = "ingr-h6";
+        noUsedIngr.innerHTML = "Used ingredients: ".concat(recipe.usedIngredientCount);
+        recipe.usedIngredients.forEach(function (ingredient, index) {
+            //@ts-ignore
+            if (ingredient.name.includes("*")) {
+                //@ts-ignore
+                var tmpIngredient = ingredient.name.substring(0, ingredient.name.indexOf("*") - 1);
+                usedIngredients += tmpIngredient.charAt(0).toUpperCase() + tmpIngredient.slice(1);
+            }
+            else {
+                //@ts-ignore
+                usedIngredients += ingredient.name.charAt(0).toUpperCase() + ingredient.name.slice(1);
+            }
+            if (index + 1 < recipe.usedIngredients.length) {
+                usedIngredients += ", ";
+            }
+        });
+        var noUnusedIngr = document.createElement("h6");
+        noUnusedIngr.className = "ingr-h6";
+        noUnusedIngr.innerHTML = "Unused ingredients: ".concat(recipe.unusedIngredients.length);
+        recipe.unusedIngredients.forEach(function (ingredient, index) {
+            //@ts-ignore
+            if (ingredient.name.includes("*")) {
+                //@ts-ignore
+                var tmpIngredient = ingredient.name.substring(0, ingredient.name.indexOf("*") - 1);
+                unusedIngredients += tmpIngredient.charAt(0).toUpperCase() + tmpIngredient.slice(1);
+            }
+            else {
+                //@ts-ignore
+                unusedIngredients += ingredient.name.charAt(0).toUpperCase() + ingredient.name.slice(1);
+            }
+            if (index + 1 < recipe.usedIngredients.length) {
+                unusedIngredients += ", ";
+            }
+        });
+        var missedIngredientsList = document.createElement("p");
+        missedIngredientsList.innerHTML = missedIngredients;
+        missedIngredientsList.className = "p-types";
+        var usedIngredientsList = document.createElement("p");
+        usedIngredientsList.innerHTML = usedIngredients;
+        usedIngredientsList.className = "p-types";
+        var unusedIngredientsList = document.createElement("p");
+        unusedIngredientsList.innerHTML = unusedIngredients;
+        unusedIngredientsList.classList.add("p-types", "unused-p");
+        tmpDiv.appendChild(title);
+        tmpDiv.appendChild(image);
+        tmpDiv.appendChild(noMissedIngr);
+        tmpDiv.appendChild(missedIngredientsList);
+        tmpDiv.appendChild(noUsedIngr);
+        tmpDiv.appendChild(usedIngredientsList);
+        tmpDiv.appendChild(noUnusedIngr);
+        tmpDiv.appendChild(unusedIngredientsList);
         recipeResults === null || recipeResults === void 0 ? void 0 : recipeResults.appendChild(tmpDiv);
     });
 }

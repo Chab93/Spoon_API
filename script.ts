@@ -2,9 +2,12 @@
 let apiKey: string | null = localStorage.getItem("apiKey");
 const maxHits: number = 2;
 const randomHits: number = 2;
+const tvmhHits: number = 2;
 //#endregion
 
-//#region **** Recipe Interface ****
+//#region /////////////////////////////////|   INTERFACES   |/////////////////////////////////
+
+//Main Recipe interface
 interface Recipe  {
     id: number;
 
@@ -26,9 +29,23 @@ interface Recipe  {
 
     analyzedInstructions: string[];
 }
+
+//TVMH result recipe interface
+interface RecipeTVMH {
+    id: number;
+
+    title: string;
+    image: string;
+
+    missedIngredientCount: number;
+    missedIngredients: string[];
+
+    usedIngredientCount: number;
+    usedIngredients: string[];
+
+    unusedIngredients: string[];
+}
 //#endregion
-
-
 
 
 //#region /////////////////////////////////|   STORE API-KEY   |/////////////////////////////////
@@ -312,9 +329,10 @@ const selectedCuisines: HTMLElement | null = document.getElementById("selectedCu
 const selectedIntolerances: HTMLElement | null = document.getElementById("selectedIntolerances");
 const selectedDiets: HTMLElement | null = document.getElementById("selectedDiets");
 
-// FetchAPI + Random button which will call the API with all selected filter parameters.
+// Buttons which will call the API with all selected filter parameters.
 const fetchBtn: HTMLElement | null = document.getElementById("call-api-btn");
 const randomBtn: HTMLElement | null = document.getElementById("get-random-recipe");
+const tvmhBtn: HTMLElement | null = document.getElementById("get-tvmh-recipe");
 
 // HTML element where all recipes are appended, fetch button also clear previous results.
 const recipeResults: HTMLElement | null = document.getElementById("recipe-results");
@@ -404,6 +422,20 @@ fetchBtn?.addEventListener("click", () => {
         .then((response) => response.json())
         .then((data) => createRecipes(data.results))
         .catch(() => alert("Cannot connect, check your API key."))
+})
+
+tvmhBtn?.addEventListener("click", () => {
+
+    recipeResults!.innerHTML = "";
+
+    let apiString: string = `https://api.spoonacular.com/recipes/findByIngredients?apiKey=${apiKey}&ingredients=${selectionFilter(ingredientChoices)}&ranking=2&ignorePantry=true&number=${tvmhHits}`
+    console.log(encodeURI(apiString))
+
+    fetch(encodeURI(apiString))
+        .then((response) => response.json())
+        .then((data) => createTVMHResults(data))
+        .catch(() => alert("Cannot connect, check your API key."))
+
 })
 
 // Event listener for the Random button, will create the URI for API call and receive data as JSON.
@@ -582,6 +614,109 @@ function createRecipes(apiData: Recipe[]){
         tmpDiv.appendChild(cuisineList);
         tmpDiv.appendChild(dietList);
         tmpDiv.appendChild(ingredientList);
+        recipeResults?.appendChild(tmpDiv);
+    })
+}
+
+function createTVMHResults(apiData: RecipeTVMH[]){
+    console.log(apiData);
+
+    apiData.forEach((recipe) => {
+
+        let missedIngredients: string = "";
+        let usedIngredients: string = "";
+        let unusedIngredients: string = "";
+
+        const tmpDiv = document.createElement("div");
+        const title = document.createElement("h5");
+        title.innerHTML = `${recipe.title}<br>ID: ${recipe.id}`
+
+        const image = document.createElement("img");
+        image.src = recipe.image;
+
+        const noMissedIngr = document.createElement("h6");
+        noMissedIngr.className = "ingr-h6";
+        noMissedIngr.innerHTML = `Missed ingredients: ${recipe.missedIngredientCount}`;
+
+        recipe.missedIngredients.forEach((ingredient: string, index: number) => {
+            //@ts-ignore
+            if(ingredient.name.includes("*")){
+                //@ts-ignore
+                const tmpIngredient = ingredient.name.substring(0, ingredient.name.indexOf("*") - 1);
+                missedIngredients += tmpIngredient.charAt(0).toUpperCase() + tmpIngredient.slice(1);
+
+            } else{
+                //@ts-ignore
+                missedIngredients += ingredient.name.charAt(0).toUpperCase() + ingredient.name.slice(1);
+            }
+
+            if(index + 1 < recipe.missedIngredients.length){
+                missedIngredients += ", ";
+            }
+        })
+
+        const noUsedIngr = document.createElement("h6");
+        noUsedIngr.className = "ingr-h6";
+        noUsedIngr.innerHTML = `Used ingredients: ${recipe.usedIngredientCount}`;
+
+        recipe.usedIngredients.forEach((ingredient: string, index: number) => {
+            //@ts-ignore
+            if(ingredient.name.includes("*")){
+                //@ts-ignore
+                const tmpIngredient = ingredient.name.substring(0, ingredient.name.indexOf("*") - 1);
+                usedIngredients += tmpIngredient.charAt(0).toUpperCase() + tmpIngredient.slice(1);
+
+            } else{
+                //@ts-ignore
+                usedIngredients += ingredient.name.charAt(0).toUpperCase() + ingredient.name.slice(1);
+            }
+
+            if(index + 1 < recipe.usedIngredients.length){
+                usedIngredients += ", ";
+            }
+        })
+
+        const noUnusedIngr = document.createElement("h6");
+        noUnusedIngr.className = "ingr-h6";
+        noUnusedIngr.innerHTML = `Unused ingredients: ${recipe.unusedIngredients.length}`;
+
+        recipe.unusedIngredients.forEach((ingredient: string, index: number) => {
+            //@ts-ignore
+            if(ingredient.name.includes("*")){
+                //@ts-ignore
+                const tmpIngredient = ingredient.name.substring(0, ingredient.name.indexOf("*") - 1);
+                unusedIngredients += tmpIngredient.charAt(0).toUpperCase() + tmpIngredient.slice(1);
+
+            } else{
+                //@ts-ignore
+                unusedIngredients += ingredient.name.charAt(0).toUpperCase() + ingredient.name.slice(1);
+            }
+
+            if(index + 1 < recipe.usedIngredients.length){
+                unusedIngredients += ", ";
+            }
+        })
+
+        const missedIngredientsList = document.createElement("p");
+        missedIngredientsList.innerHTML = missedIngredients;
+        missedIngredientsList.className = "p-types";
+
+        const usedIngredientsList = document.createElement("p");
+        usedIngredientsList.innerHTML = usedIngredients;
+        usedIngredientsList.className = "p-types";
+
+        const unusedIngredientsList = document.createElement("p");
+        unusedIngredientsList.innerHTML = unusedIngredients;
+        unusedIngredientsList.classList.add("p-types", "unused-p");
+
+        tmpDiv.appendChild(title);
+        tmpDiv.appendChild(image);
+        tmpDiv.appendChild(noMissedIngr);
+        tmpDiv.appendChild(missedIngredientsList);
+        tmpDiv.appendChild(noUsedIngr);
+        tmpDiv.appendChild(usedIngredientsList);
+        tmpDiv.appendChild(noUnusedIngr);
+        tmpDiv.appendChild(unusedIngredientsList);
         recipeResults?.appendChild(tmpDiv);
     })
 }
