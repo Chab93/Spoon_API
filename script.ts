@@ -420,7 +420,7 @@ fetchBtn?.addEventListener("click", () => {
 
     fetch(encodeURI(apiString))
         .then((response) => response.json())
-        .then((data) => createRecipes(data.results))
+        .then((data) => createRecipes(data.results, true))
         .catch(() => alert("Cannot connect, check your API key."))
 })
 
@@ -447,7 +447,7 @@ randomBtn?.addEventListener("click", () => {
 
     fetch(encodeURI(apiString))
         .then((response) => response.json())
-        .then((data) => createRecipes(data.recipes))
+        .then((data) => createRecipes(data.recipes, false))
 })
 
 
@@ -502,7 +502,7 @@ function fetchTimeout(time: number){
 }
 
 // Receives JSON data from fetch event handler and creates HTML objects of recipes and appends to the HTML.
-function createRecipes(apiData: Recipe[]){
+function createRecipes(apiData: Recipe[], nutrients: boolean){
 
     apiData.forEach((recipe) => {
         const tmpDiv = document.createElement("div");
@@ -596,10 +596,12 @@ function createRecipes(apiData: Recipe[]){
             })
         })
 
-        //@ts-ignore
-        recipe.nutrition.nutrients.forEach((item) => {
+        if(nutrients){
+            //@ts-ignore
+            recipe.nutrition.nutrients.forEach((item) => {
             console.log(item.name + " | " + item.amount + " " + item.unit)
-        })
+            })
+        }
 
         const dishTypes = document.createElement("p");
         dishTypes.innerHTML = mealTypes;
