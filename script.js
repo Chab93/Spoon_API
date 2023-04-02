@@ -323,7 +323,7 @@ fetchBtn === null || fetchBtn === void 0 ? void 0 : fetchBtn.addEventListener("c
     console.log(encodeURI(apiString));
     fetch(encodeURI(apiString))
         .then(function (response) { return response.json(); })
-        .then(function (data) { return createRecipes(data.results); })
+        .then(function (data) { return createRecipes(data.results, true); })
         .catch(function () { return alert("Cannot connect, check your API key."); });
 });
 tvmhBtn === null || tvmhBtn === void 0 ? void 0 : tvmhBtn.addEventListener("click", function () {
@@ -342,7 +342,7 @@ randomBtn === null || randomBtn === void 0 ? void 0 : randomBtn.addEventListener
     console.log(encodeURI(apiString));
     fetch(encodeURI(apiString))
         .then(function (response) { return response.json(); })
-        .then(function (data) { return createRecipes(data.recipes); });
+        .then(function (data) { return createRecipes(data.recipes, false); });
 });
 //#endregion
 //#region /////////////////////////////////|   FUNCTIONS HERE   |/////////////////////////////////
@@ -391,7 +391,7 @@ function fetchTimeout(time) {
     return controller;
 }
 // Receives JSON data from fetch event handler and creates HTML objects of recipes and appends to the HTML.
-function createRecipes(apiData) {
+function createRecipes(apiData, nutrients) {
     apiData.forEach(function (recipe) {
         var tmpDiv = document.createElement("div");
         var title = document.createElement("h5");
@@ -462,10 +462,12 @@ function createRecipes(apiData) {
                 }
             });
         });
-        //@ts-ignore
-        recipe.nutrition.nutrients.forEach(function (item) {
-            console.log(item.name + " | " + item.amount + " " + item.unit);
-        });
+        if (nutrients) {
+            //@ts-ignore
+            recipe.nutrition.nutrients.forEach(function (item) {
+                console.log(item.name + " | " + item.amount + " " + item.unit);
+            });
+        }
         var dishTypes = document.createElement("p");
         dishTypes.innerHTML = mealTypes;
         dishTypes.className = "p-types";
