@@ -449,6 +449,7 @@ randomBtn?.addEventListener("click", () => {
     fetch(encodeURI(apiString))
         .then((response) => response.json())
         .then((data) => createRecipes(data.recipes, false))
+        .catch(() => alert("Cannot connect, check your API key."))
 })
 
 

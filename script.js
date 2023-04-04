@@ -343,7 +343,8 @@ randomBtn === null || randomBtn === void 0 ? void 0 : randomBtn.addEventListener
     console.log(encodeURI(apiString));
     fetch(encodeURI(apiString))
         .then(function (response) { return response.json(); })
-        .then(function (data) { return createRecipes(data.recipes, false); });
+        .then(function (data) { return createRecipes(data.recipes, false); })
+        .catch(function () { return alert("Cannot connect, check your API key."); });
 });
 //#endregion
 //#region /////////////////////////////////|   FUNCTIONS HERE   |/////////////////////////////////
